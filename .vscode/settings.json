@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "connectionTimeout": 60,
+            "database": "CCUPS_DB",
+            "dialect": "PostgreSQL",
+            "name": "posgres",
+            "password": "pa$$word1",
+            "port": 5432,
+            "server": "172.16.132.6",
+            "username": "postgres"
+        }
+    ]
+}
