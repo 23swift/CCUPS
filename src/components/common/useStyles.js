@@ -1,5 +1,5 @@
 import { makeStyles,styled } from '@material-ui/core/styles';
-import { amber, green,blue } from '@material-ui/core/colors';
+import { amber, green, blue, orange } from '@material-ui/core/colors';
 const drawerWidth = 240;
 const useStyles = makeStyles(theme => ({
     root: {
@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
       marginTop:'10px'
     },
     formControl: {
-        // margin: theme.spacing(1),
+      marginTop: theme.spacing(1),
         minWidth: "100%",
       },
       
@@ -75,6 +75,28 @@ const useStyles = makeStyles(theme => ({
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
   },
+    cancelButton: {
+        color:orange[400],
+        // '&:hover':{
+        //     // color:theme.palette.primary.dark,
+        //     backgroundColor:theme.palette.secondary.main
+        // },
+        borderColor:orange[400],
+       
+      },
+      
+      submitButton: {
+        color:theme.palette.primary.light,
+        // '&:hover':{
+        //     // color:theme.palette.primary.dark,
+        //     backgroundColor:theme.palette.primary.light
+        // },
+        borderColor:theme.palette.primary.light
+       
+      },
+      toolBar:{
+        backgroundColor: "red"
+      }
     // fab: {
     //   margin: theme.spacing(1),
     // }

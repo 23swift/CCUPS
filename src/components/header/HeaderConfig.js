@@ -10,6 +10,7 @@ import MatchInfo from './../common/MatchInfo';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
+
 function createData(sq,fieldName, dataType, size, format, mappToSystem) {
     return {sq, fieldName, dataType, size, format, mappToSystem };
   }
@@ -21,21 +22,17 @@ function createData(sq,fieldName, dataType, size, format, mappToSystem) {
     // createData(4,'accountNumber', 'Numeric', 10,'', false),
     // createData(5,'amount', 'Decimal', 13, '0000000000000.00', false),
   ];
+
+
 export default function HeaderConfig() {
   const classes = useStyles();
     return (
         <>
        
-       
-       
-     
-            <ConfigList title="Header Configuration" items={rows}/>
+            <ConfigList title="Header Configuration" items={rows} />
             <ConfigTestArea/>
             <MatchInfo/>
-     
-          
-     
-           
+         
         </>
     )
 }

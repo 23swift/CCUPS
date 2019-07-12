@@ -14,10 +14,15 @@ function createData(sq,fieldName, dataType, size, format, mappToSystem) {
     createData(4,'accountNumber', 'Numeric', 10,'', false),
     createData(5,'amount', 'Decimal', 13, '0000000000000.00', false),
   ];
+  const addConfig=()=>{
+
+    console.log('Add function Content');
+    
+  }
 export default function ContentConfig() {
     return (
         <>
-            <ConfigList title="Content Configuration" items={rows}/>
+            <ConfigList title="Content Configuration" items={rows} addFn={addConfig}/>
             <ConfigTestArea/>
             <MatchInfo/>
         </>

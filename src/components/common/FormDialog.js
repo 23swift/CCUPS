@@ -1,30 +1,61 @@
 import React, { Component } from 'react'
 import { Form,Field,withFormik } from 'formik';
 import * as Yup from 'yup';
-import { MenuItem, Button,Dialog,FormControl,InputLabel,FormControlLabel,Checkbox} from '@material-ui/core';
-import { Typography } from '@material-ui/core';
+import { MenuItem, Button, Dialog, FormControl, InputLabel, FormControlLabel, Checkbox, Grid, Box, Toolbar, Typography } from '@material-ui/core';
+
 import { DialogContent } from '@material-ui/core';
 import { DialogActions } from '@material-ui/core';
 import { DialogTitle } from '@material-ui/core';
 import useStyles from './useStyles';
 import { TextField as formikField,Select as formikSelect } from 'formik-material-ui';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { styled } from '@material-ui/styles';
+import { Send, Cancel } from '@material-ui/icons';
+import { keys } from '@material-ui/core/styles/createBreakpoints';
 
+const CustomProgress=styled(CircularProgress)({
+
+ 
+  margin: "5px",
+  color: "orange",
+ 
+
+
+});
+function getDataTypes(){
+  return([
+    {
+        "regexpattern": "[0-9]",
+        "id": 1,
+        "desc": "Numeric"
+    },
+    {
+        "regexpattern": "[0-9a-zA-Z]",
+        "id": 2,
+        "desc": "Alpha Numeric"
+    },
+    {
+        "regexpattern": "[0-9]",
+        "id": 3,
+        "desc": "Date"
+    },
+    {
+        "regexpattern": "[0-9]",
+        "id": 4,
+        "desc": "Amount"
+    }
+])
+}
+const typeList=getDataTypes();
 ////////////////Dialog
 const   FormDialog =(props)=> {
-    // const [open, setOpen] = React.useState(false);
-  
-    // function handleClickOpen() {
-    //   setOpen(true);
-    // }
-  
-    // function handleClose() {
-    //   setOpen(false);
-    // }
+    
+    
     const classes = useStyles();
     return (
       <div>
        
-        <Dialog open={props.open} onClose={props.handleClose} aria-labelledby="form-dialog-title">
+        <Dialog open={props.open} onClose={props.handleClose} aria-labelledby="form-dialog-title" disableBackdropClick>
           <DialogTitle id="form-dialog-title" color="primary">
             
           <Typography variant="inherit" color='primary' className={classes.title} >
@@ -40,16 +71,16 @@ const   FormDialog =(props)=> {
           <DialogContent>
         
            
-            <BillingInputForm/>
+            <InputForm addFunction={props.addFunction} cancelFunc={props.handleClose} />
           </DialogContent>
-          <DialogActions>
+          {/* <DialogActions>
             <Button onClick={props.handleClose} color="primary" variant="contained">
               Save
             </Button>
             <Button onClick={props.handleClose} color="secondary"  variant="contained">
               Cancel
             </Button>
-          </DialogActions>
+          </DialogActions> */}
         </Dialog>
       </div>
     );
@@ -59,12 +90,14 @@ const   FormDialog =(props)=> {
 
 
   
-const BillingFormTemplate =props =>{
+const InputFormTemplate =props =>{
     const {
       values,
       touched,
       errors,
-      isSubmitting
+      isSubmitting,
+      addFunction,
+      cancelFunc
       
       
     } = props;
@@ -79,26 +112,34 @@ const BillingFormTemplate =props =>{
                         Add Post
                 </Typography> */}
               <Form >
-                        {/* <Field  component={formikField} label="Starts at Line"   fullWidth name="startingLine"   /> */}
+                         <Field  component={formikField} label="Sequence Number"   fullWidth name="sequenceNum"   />
+
+                        <FormControl className={classes.formControl}>
+                        <Field  component={formikField} label="Field Name"   fullWidth name="fieldName"   />
+                        </FormControl>
                         
-                        <Field  component={formikField} label="Field Name"   fullWidth name="fieldname"   />
+                        
+                        
+
                         <FormControl className={classes.formControl}>
                             <InputLabel htmlFor="type-simple">Type</InputLabel>
                            
-                            <Field component={formikSelect} name="type" id="type-simple">
-                            <MenuItem value="">
+                            <Field component={formikSelect} name="dataType" id="type-simple">
+                            <MenuItem selected value="">
                                 <em>None</em>
                             </MenuItem>
-                            <MenuItem value={10}>Numeric</MenuItem>
-                            <MenuItem value={20}>Alpha Numeric</MenuItem>
-                            <MenuItem value={30}>DateTime</MenuItem>
-                            <MenuItem value={40}>Decimal</MenuItem>
-                            {/* <MenuItem value={50}></MenuItem>
-                            <MenuItem value={60}>Transaction Date</MenuItem> */}
+                              {typeList.map(item => (
+
+                                <MenuItem value={item} key={item.id}>{item.desc}</MenuItem>
+                              ))
+                              }
+                            
+                           
                           </Field>
                         </FormControl>
+
                         <Field component={formikField} label="Size"   fullWidth multiline rows="2" rowsMax="2"  name="size" />
-                        <Field component={formikField} label="Format"   fullWidth multiline rows="2" rowsMax="2"  name="format" />
+                        {/* <Field component={formikField} label="Format"   fullWidth multiline rows="2" rowsMax="2"  name="format" /> */}
                       
                         <FormControlLabel
                             control={
@@ -107,8 +148,8 @@ const BillingFormTemplate =props =>{
                             label="Mapp to System Field"
                         />
 
-                        <FormControl className={classes.formControl}>
-                            {/* <InputLabel htmlFor="age-simple">System Field</InputLabel> */}
+                        {/* <FormControl className={classes.formControl}>
+                            { <InputLabel htmlFor="age-simple">System Field</InputLabel> }
                             <Field component={formikSelect} name="systemField">
                             <MenuItem value="">
                                 <em>None</em>
@@ -120,20 +161,35 @@ const BillingFormTemplate =props =>{
                             <MenuItem value={50}>Card Number</MenuItem>
                             <MenuItem value={60}>Transaction Date</MenuItem>
                             </Field>
-                        </FormControl>      
+                        </FormControl>       */}
 
 
-                        {/* <Grid container spacing={2}>
-                            <Grid item>
-                            <Button type="submit" variant="contained" color="primary" className={classes.submitButton} disabled={!isEmpty(errors) || isSubmitting} >
-                              {isSubmitting? <Box display="flex" flexDirection="row"  flexWrap="nowrap">
-                                <Box ><CustomProgress size={20} /></Box> <Box ><Typography  color="primary">Please wait...</Typography></Box></Box>:"Submit"
-                              }
-                            </Button>
-                            </Grid>
-                           
+                        <Toolbar>
+                          <Typography className={classes.title}>
+
+                          </Typography>
+                      
+                                            {isSubmitting? 
+                                                      <Box display="flex" flexDirection="row"  flexWrap="nowrap">
+                                                        <Box ><CustomProgress size={20} /></Box> <Box ><Typography  color="primary">Please wait...</Typography>
+                                                        </Box></Box>:
+                                                     
+                                                     <>
+                                                     <Button type="submit"  variant="outlined"  className={classes.submitButton} >
+                                                      <Send style={{margin:"2px"}}/>Submit</Button>
+                                                       <Box mx={1}>
+                                                       <Button className={classes.cancelButton}   variant="outlined" onClick={()=>props.cancelFunc()} >
+                                                       <Cancel style={{margin:"2px"}} />
+                                                         Cancel</Button>                      
+                                                       </Box>
+                                                       </>
+                                          }
+                          
+                         
+                          
+                                            
+                        </Toolbar>
                             
-                          </Grid> */}
                     
                
       
@@ -148,23 +204,37 @@ const BillingFormTemplate =props =>{
 
   //Validation Schema
 const SignupSchema=Yup.object().shape({
-title:Yup.string()
+  fieldName:Yup.string()
 .min(2,"Minimum of two Characters")
 .max(20,"Maximum of 20 Characters")
 .required('Title is Required'),
-body:Yup.string()
-.min(2,"Minimum of two Characters")
-.max(500,"Maximum of 500 Characters")
-.required('Body is Required'),
+// body:Yup.string()
+// .min(2,"Minimum of two Characters")
+// .max(500,"Maximum of 500 Characters")
+// .required('Body is Required'),
 
 
 
 });
+const  addConfig=(config)=>{
+      
+        
+  fetch('/api/addFileConfig',{
+    method:'POST',
+    headers:{'content-type':'application/json'},
+    body:JSON.stringify(config)
+    
 
+}).then(res=>res.json()).then(newPost=>{
+          console.log(this);
+          
+    }
+);
+}
   //Form Configuration
-export const BillingInputForm = withFormik({
+export const InputForm = withFormik({
 
-    mapPropsToValues: () => ({filedName:'',type:'',size:'',format:'',systemField:''})
+    mapPropsToValues: () => ({fieldName:'',dataType:0,size:'',sequenceNum:0})
     ,
     
     
@@ -175,9 +245,10 @@ export const BillingInputForm = withFormik({
     handleSubmit: (values,{props,resetForm,setSubmitting}) => {
       setSubmitting(true);
       
-      console.log(props);
+      // console.log(props);
      
       setTimeout(() => {
+        props.addFunction(values);
         resetForm();
        
         setSubmitting(false);
@@ -186,7 +257,7 @@ export const BillingInputForm = withFormik({
     },
     
     displayName: 'BasicForm',
-    })(BillingFormTemplate);
+    })(InputFormTemplate);
     
 
 export default FormDialog;

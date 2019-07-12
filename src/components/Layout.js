@@ -145,10 +145,10 @@ const Layout=()=>{
         
         <Route exact path="/" component={BillingInput} />
               
-              <Route exact path="/header-config" component={HeaderConfig} />
+              {/* <Route exact path="/header-config" component={HeaderConfig} /> */}
 
-            <Route exact path="/content-config" component={ContentConfig} />
-           <Route exact path="/footer-config" component={FooterConfig} />
+            {/* <Route exact path="/content-config" component={ContentConfig} />
+           <Route exact path="/footer-config" component={FooterConfig} /> */}
            <Route exact path="/billing-input" component={BillingInput} />
            <Route exact path="/institution" component={Institution} />
            <Route exact path="/product" component={Product} />
