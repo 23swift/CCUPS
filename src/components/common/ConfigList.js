@@ -28,25 +28,8 @@ import ReactSortable  from 'react-sortablejs';
 
   const  ConfigList=(props)=> {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
-    
-
-   
-    function handleClickOpen(props) {
-      setOpen(true);
-    }
   
-    function handleClose() {
-      setOpen(false);
-    }
-    function handleAdd(){
-
-    }
-
-
-   
-
-
+    
     return (
       <>
        
@@ -55,85 +38,141 @@ import ReactSortable  from 'react-sortablejs';
       
         <div className={classes.demo}>
           <List dense={false}  style={{width:"100%"}}>
-          <SortableList items={props.items} onChange={props.onChange} handleClickOpen={handleClickOpen}/>
+          <SortableList items={props.items} onChange={props.onChange} handleDelete={props.handleDelete} />
           </List>
         </div>
    
       </Grid>
       </Grid>
       
-      <AlertDialog open={open} handleClose={handleClose} />
+     
       </>
     );
   }
   
 
 
-  const SortableList = ({ items, onChange,handleClickOpen }) => {
+  const SortableList = ({ items, onChange,handleClickOpen,handleconfirmOpen,updateFunction,handleDelete}) => {
     const classes = useStyles();
     let sortable = null; // sortable instance
+    const [open, setOpen] = React.useState(false);
+    const [current,setCurrent] = React.useState({});
+    const [confirmOpen, setConfirmOpen] = React.useState(false);
     
-    const listItems = items.map(item => (
-            <ListItem id={item.id}  key={item.id} data-id={item.sequenceNum}>
-                
+  const  handleSelected=(id,event)=>{
+    event.preventDefault();
+    let item=items.find((e)=>e.id==id);
+      
+       
+      // console.log(item);
+      setCurrent(item);
+      setOpen(true);
+     
+    }
+    function handleClickOpen(props) {
+      setOpen(true);
+    }
+    function handleClose() {
+      setOpen(false);
+    }
+   
+    function handleconfirmClose(props) {
+      setConfirmOpen(false);
+    }
+    function handleconfirmOpen(id,event) {
+      event.preventDefault();
+      let item=items.find((e)=>e.id==id);
+     
+      setCurrent(item);
+      
+      setConfirmOpen(true);
+    }
+    const handleConfirmSubmit=()=>{
+
+      console.log('confirm code here');
+      setConfirmOpen(false);
+      
+    }
+
+    const listItems = items.map(listItem => (
+      
+      <div id={listItem.id}  key={listItem.id} data-id={listItem.sequenceNum}>
+                  <ListItem >
             <ListItemAvatar >
-            <Avatar className={classes.avatar}>{item.sequenceNum}</Avatar>
+            <Avatar className={classes.avatar}>{listItem.sequenceNum}</Avatar>
             
           </ListItemAvatar>
           <Grid container spacing={1}>
         
-          <Grid item style={{flexGrow:1}}>
-          <Grid container direction="row"  spacing={1}>
-          <Grid item>
-
-          <Typography noWrap className={classes.subTitle}> {item.fieldName}</Typography>
-
+            <Grid item style={{flexGrow:1}}>
+            <Grid container direction="row"  spacing={1}>
+            <Grid item>
             
-            </Grid>
-                
+            <Typography noWrap className={classes.subTitle}> {listItem.fieldName}</Typography>
 
-                <Grid container spacing={1}>
-                <Grid item>
-                <Typography  variant="caption" color="primary"  >Data Type: {item.dataType.desc}</Typography>
-                </Grid>
-                <Grid item>
-                <Typography  variant="caption"   color="primary">Size: {item.size}</Typography>
-                </Grid>
-                {/* <Grid item>
-                <Typography  variant="caption"   color="primary">Format: {item.format}</Typography>
-                </Grid> */}
-                
               
-                
               </Grid>
+                  
+
+                  <Grid container spacing={1}>
+                  <Grid item>
+                  <Typography  variant="caption" color="primary"  >Data Type: {listItem.dataType.desc}</Typography>
+                  </Grid>
+                  <Grid item>
+                  <Typography  variant="caption"   color="primary">Size: {listItem.size}</Typography>
+                  </Grid>
+                  {/* <Grid item>
+                  <Typography  variant="caption"   color="primary">Format: {item.format}</Typography>
+                  </Grid> */}
+                  
+                
+                  
+                </Grid>
               
         </Grid>
-
+        
       </Grid>
       <Grid item>
-          <IconButton  size="small"><Edit color="primary"/></IconButton>
-          <IconButton size="small" onClick={handleClickOpen}><Clear color="error"/></IconButton>
+          <IconButton  size="small" onClick={(e)=>{handleSelected(listItem.id,e)}}><Edit color="primary"/></IconButton>
+          <IconButton size="small" onClick={(e)=>{handleconfirmOpen(listItem.id,e)}}><Clear color="error"/></IconButton>
           
         </Grid>
       </Grid>
-
-        </ListItem>
+      
+    
+    </ListItem>
+     <Divider variant="inset" component="li" />
+      </div>
+          
+    
 ));
 
     return (
         <div>
-           
-           
+            <AlertDialog open={confirmOpen} handleClose={handleconfirmClose} handleSubmit={()=>{handleDelete(current.id);handleconfirmClose();}} />
+           <FormDialog open={open} currentItem={current} handleClose={handleClose}  updateFunction={()=>{console.log('update function here');handleClose();}}/>
             <ReactSortable  
                     // tag="ul" // Defaults to "div"
                     onChange={(order, sortable, evt) => {
-                        // console.log(evt);
-                        // console.log(sortable);
+                       
+                        //  console.log(evt);
                          
                         //  this.setState({ items: newOrder(order,this.state.items) });
                         onChange(order,evt.oldIndex+1,evt.newIndex+1);
                         
                     }}
+
+                    options={{
+                       // Element is removed from the list into another list
+                        onRemove: function (/**Event*/evt) {
+                          // same properties as onEnd
+                          // console.log('item removed');
+                          
+                      }, onChoose: function (/**Event*/evt) {
+                        // console.log(evt.oldIndex);  // element index within parent
+                    },
+                    }}
+                     
                 >
                      {listItems}
                 </ReactSortable >

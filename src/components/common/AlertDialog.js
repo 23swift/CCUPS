@@ -42,7 +42,7 @@ export default function AlertDialog(props) {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button  variant="outlined"   color="primary">
+            <Button  variant="outlined" onClick={props.handleSubmit}  color="primary">
               Yes Please
             </Button>
             <Button variant="outlined" onClick={props.handleClose}  autoFocus>

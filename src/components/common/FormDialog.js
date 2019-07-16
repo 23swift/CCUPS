@@ -71,7 +71,7 @@ const   FormDialog =(props)=> {
           <DialogContent>
         
            
-            <InputForm addFunction={props.addFunction} cancelFunc={props.handleClose} />
+            <InputForm addFunction={props.addFunction} cancelFunc={props.handleClose} values={props.currentItem}  updateFunction={props.updateFunction} />
           </DialogContent>
           {/* <DialogActions>
             <Button onClick={props.handleClose} color="primary" variant="contained">
@@ -97,11 +97,12 @@ const InputFormTemplate =props =>{
       errors,
       isSubmitting,
       addFunction,
-      cancelFunc
-      
+      cancelFunc,
+      currentItem,
+      updateFunction,
       
     } = props;
-    // console.log(props);
+    //  console.log(props);
     
     
   const classes = useStyles();
@@ -112,28 +113,28 @@ const InputFormTemplate =props =>{
                         Add Post
                 </Typography> */}
               <Form >
-                         <Field  component={formikField} label="Sequence Number"   fullWidth name="sequenceNum"   />
+                         {/* <Field  component={formikField} label="Sequence Number"   fullWidth name="sequenceNum"   /> */}
 
                         <FormControl className={classes.formControl}>
-                        <Field  component={formikField} label="Field Name"   fullWidth name="fieldName"   />
+                        <Field  component={formikField} label="Field Name" value={values.fieldName}  fullWidth name="fieldName"   />
                         </FormControl>
                         
                         
                         
 
                         <FormControl className={classes.formControl}>
-                            <InputLabel htmlFor="type-simple">Type</InputLabel>
                            
-                            <Field component={formikSelect} name="dataType" id="type-simple">
-                            <MenuItem selected value="">
-                                <em>None</em>
-                            </MenuItem>
+                           
+                            <Field component={formikField} select  label="Data Type"  name="dataType" id="type-simple">
+                            
                               {typeList.map(item => (
 
-                                <MenuItem value={item} key={item.id}>{item.desc}</MenuItem>
+                                <MenuItem value={item.id} key={item.id}>{item.desc}</MenuItem>
                               ))
                               }
-                            
+                            <MenuItem  value="24">
+                                <em>selected</em>
+                            </MenuItem>
                            
                           </Field>
                         </FormControl>
@@ -216,25 +217,19 @@ const SignupSchema=Yup.object().shape({
 
 
 });
-const  addConfig=(config)=>{
-      
-        
-  fetch('/api/addFileConfig',{
-    method:'POST',
-    headers:{'content-type':'application/json'},
-    body:JSON.stringify(config)
-    
 
-}).then(res=>res.json()).then(newPost=>{
-          console.log(this);
-          
-    }
-);
-}
   //Form Configuration
 export const InputForm = withFormik({
 
-    mapPropsToValues: () => ({fieldName:'',dataType:0,size:'',sequenceNum:0})
+    mapPropsToValues:  (props)=>{
+      //  console.log(props.values)
+      
+      return{fieldName:props.values?props.values.fieldName:'',
+      dataType:props.values?props.values.dataType.id: 0,
+      size:props.values?props.values.size:''}
+      
+    }
+
     ,
     
     
@@ -244,15 +239,27 @@ export const InputForm = withFormik({
     
     handleSubmit: (values,{props,resetForm,setSubmitting}) => {
       setSubmitting(true);
-      
+     let selectedType = typeList.find((e)=> e.id==values.dataType);
+     values.dataType=selectedType;
       // console.log(props);
-     
+     if(props.updateFunction){
+      
+      setTimeout(() => {
+        props.updateFunction();
+        resetForm();
+       
+        setSubmitting(false);
+      }, 2000);
+     }
+     if(props.addFunction){
       setTimeout(() => {
         props.addFunction(values);
         resetForm();
        
         setSubmitting(false);
       }, 2000);
+     }
+      
        
     },
     

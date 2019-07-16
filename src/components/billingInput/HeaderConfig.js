@@ -39,7 +39,10 @@ export default class  HeaderConfig extends Component {
   // 
 
   addConfig=(config)=>{
-    config={...config,fileSection:1,fileType:1}
+    let sqNum=this.state.configList.length;
+
+
+    config={...config,fileSection:1,fileType:1,sequenceNum:sqNum+1}
       fetch('/api/addFileConfig',{
         method:'POST',
         headers:{'content-type':'application/json'},
@@ -47,8 +50,7 @@ export default class  HeaderConfig extends Component {
         
     
     }).then(res=>res.json()).then(newconfig=>{
-              console.log(this);
-              console.log('Add function for Billing Input header:'+ JSON.stringify(config));
+             
               this.getconfigList();
         }
     );
@@ -58,18 +60,13 @@ export default class  HeaderConfig extends Component {
   updateSequenceConfig=(config)=>{
     // config={...config,fileSection:1,fileType:1}
 
-      fetch('api/UpdateConfigSequence',{
+     return fetch('api/UpdateConfigSequence',{
         method:'PUT',
         headers:{'content-type':'application/json'},
         body:JSON.stringify(config)
         
     
-    }).then(
-              // console.log(this);
-              // console.log('Add function for Billing Input header:'+ JSON.stringify(config));
-              this.getconfigList()
-        
-    );
+    });
    
     
   }
@@ -84,7 +81,7 @@ export default class  HeaderConfig extends Component {
       setTimeout(()=>{
         this.setState({...this.state,configList:data});  
         this.setState({...this.state,isLoading:false});
-        console.log(this.state.configList);
+       
       },1000)
       // this.setState({...this.state,configList:data});  
       // this.setState({...this.state,isLoading:false});
@@ -99,34 +96,28 @@ export default class  HeaderConfig extends Component {
     let list=[]
     let counter=1;
     
-    
-      // order.map(orderItem=>{
-      //    var result= this.state.configList.find((e) => e.sequenceNum == orderItem)
    
-     
-      //    result={...result,sequenceNum:counter}
-      //    list.push(result);
-      //    ++counter;
-      // });
-      // console.log(list);
-   var currentItem=this.state.configList.find((e) => e.sequenceNum == oldIndex);
-  
-   var movedItem=this.state.configList.find((e) => e.sequenceNum == newIndex);
-  
-   currentItem.sequenceNum=newIndex;
-   movedItem.sequenceNum=oldIndex;
-
-   var affectedConfig=[currentItem,movedItem]
-   this.updateSequenceConfig(affectedConfig);
+      order.map(orderItem=>{
+         var result= this.state.configList.find((e) => e.sequenceNum == orderItem)
+   
+        
+         result={...result,sequenceNum:counter}
+         list.push(result);
+         ++counter;
+      });
   
 
-   console.log(currentItem);
-   console.log(movedItem);
+   var affectedConfig=list
    
+   
+   this.setState({...this.state,isLoading:true});
+   this.updateSequenceConfig(affectedConfig).then(()=>{
+            this.setState({...this.state,configList:list}) 
+            this.setState({...this.state,isLoading:false});
+        }
+    );
   
-  
-  //     this.setState({...this.state,configList:list});  
-  //     console.log(this.state.configList);
+
       
     
   }
@@ -138,7 +129,57 @@ export default class  HeaderConfig extends Component {
    handleClose=()=> {
     this.setState({...this.state,openDialog:false});
   }
- 
+  
+
+
+
+  genSequence=(data)=>{
+        let list=[];
+        let counter=1
+        data.map(item=>{
+          
+
+        
+          let result={...item,sequenceNum:counter}
+          list.push(result);
+          ++counter;
+      });
+       
+       this.updateSequenceConfig(list).then(()=>{
+        this.setState({...this.state,configList:list}) 
+        this.setState({...this.state,isLoading:false});
+    });
+  }
+
+  handleDelete=(id)=>{
+    console.log('run delete',id);
+   
+    this.setState({...this.state,isLoading:true});
+    fetch("/api/deleteFileConfig",{
+      method:'DELETE',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify(id)}
+      ).
+    then(response => response.json()).
+    then((data)=>{
+      setTimeout(()=>{
+       this.genSequence(data);
+      },1000)
+      // this.setState({...this.state,configList:data});  
+      // this.setState({...this.state,isLoading:false});
+      // console.log(this.state.configList);
+        
+    });
+   
+    // this.setState({...this.state,configList:this.state.configList.filter((e)=>e.id!=id)});  
+
+
+    
+    
+   
+   
+  }
+
   componentDidMount(){
      
    this.getconfigList();
@@ -158,7 +199,7 @@ export default class  HeaderConfig extends Component {
                     <Fab size="small" aria-label="Edit" className={useStyles.fab} color="secondary"  onClick={this.handleClickOpen}>
                       <AddIcon />
                   </Fab>
-                  <FormDialog open={this.state.openDialog} handleClickOpen={this.handleClickOpen} handleClose={this.handleClose} addFunction={this.addConfig} /> 
+                  <FormDialog open={this.state.openDialog} handleClickOpen={this.handleClickOpen} currentItem={null} handleClose={this.handleClose} addFunction={this.addConfig} /> 
                 </Toolbar> 
       
            
@@ -168,7 +209,7 @@ export default class  HeaderConfig extends Component {
                                                         <Box ><CustomProgress size={20} /></Box> <Box ><Typography  color="primary">Please wait...</Typography>
                                                         </Box></Box>
                                                       } 
-             <ConfigList title="Header Configuration" items={this.state.configList} onChange={this.onListChange}/>
+             <ConfigList title="Header Configuration" items={this.state.configList} onChange={this.onListChange} handleDelete={this.handleDelete}/>
 
              {/* <SortableList items={this.state.configList}/> */}
              
