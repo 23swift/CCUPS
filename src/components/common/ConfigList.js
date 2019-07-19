@@ -28,7 +28,7 @@ import ReactSortable  from 'react-sortablejs';
 
   const  ConfigList=(props)=> {
     const classes = useStyles();
-  
+    
     
     return (
       <>
@@ -38,7 +38,8 @@ import ReactSortable  from 'react-sortablejs';
       
         <div className={classes.demo}>
           <List dense={false}  style={{width:"100%"}}>
-          <SortableList items={props.items} onChange={props.onChange} handleDelete={props.handleDelete} />
+          <SortableList items={props.items} onChange={props.onChange} handleDelete={props.handleDelete} updateFunction={props.updateFunction}
+           dataTypeList={props.dataTypeList} />
           </List>
         </div>
    
@@ -52,19 +53,19 @@ import ReactSortable  from 'react-sortablejs';
   
 
 
-  const SortableList = ({ items, onChange,handleClickOpen,handleconfirmOpen,updateFunction,handleDelete}) => {
+  const SortableList = ({ items, onChange,handleClickOpen,handleconfirmOpen,updateFunction,handleDelete,dataTypeList}) => {
     const classes = useStyles();
     let sortable = null; // sortable instance
     const [open, setOpen] = React.useState(false);
     const [current,setCurrent] = React.useState({});
     const [confirmOpen, setConfirmOpen] = React.useState(false);
     
+    
   const  handleSelected=(id,event)=>{
     event.preventDefault();
     let item=items.find((e)=>e.id==id);
       
        
-      // console.log(item);
       setCurrent(item);
       setOpen(true);
      
@@ -150,7 +151,7 @@ import ReactSortable  from 'react-sortablejs';
     return (
         <div>
             <AlertDialog open={confirmOpen} handleClose={handleconfirmClose} handleSubmit={()=>{handleDelete(current.id);handleconfirmClose();}} />
-           <FormDialog open={open} currentItem={current} handleClose={handleClose}  updateFunction={()=>{console.log('update function here');handleClose();}}/>
+           <FormDialog open={open} currentItem={current} handleClose={handleClose}  updateFunction={updateFunction} dataTypeList={dataTypeList}/>
             <ReactSortable  
                     // tag="ul" // Defaults to "div"
                     onChange={(order, sortable, evt) => {

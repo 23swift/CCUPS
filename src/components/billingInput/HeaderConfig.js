@@ -31,7 +31,8 @@ export default class  HeaderConfig extends Component {
     this.state={
       configList:[],
       isLoading:false,
-      openDialog:false
+      openDialog:false,
+      dataTypeList:[]
       
     }
   }
@@ -70,7 +71,22 @@ export default class  HeaderConfig extends Component {
    
     
   }
+  updateConfig=(config)=>{
+    // config={...config,fileSection:1,fileType:1}
 
+     return fetch('api/UpdateConfig',{
+        method:'PUT',
+        headers:{'content-type':'application/json'},
+        body:JSON.stringify(config)
+        
+    
+    }).then(()=>{
+
+      this.getconfigList();
+    });
+   
+    
+  }
   
   getconfigList=()=>{
     // console.log('code to get loist here');
@@ -90,7 +106,16 @@ export default class  HeaderConfig extends Component {
     });
     
   }
-
+   getDataTypes=()=>{
+    fetch("/api/getAllDataTypes").
+    then(response => response.json()).then((data)=>{
+      
+      
+      this.setState({...this.state,dataTypeList:data});
+     
+    });
+  
+  }
   onListChange=(order,oldIndex,newIndex)=>{
     let configList=this.state.configList;
     let list=[]
@@ -130,8 +155,6 @@ export default class  HeaderConfig extends Component {
     this.setState({...this.state,openDialog:false});
   }
   
-
-
 
   genSequence=(data)=>{
         let list=[];
@@ -174,8 +197,6 @@ export default class  HeaderConfig extends Component {
     // this.setState({...this.state,configList:this.state.configList.filter((e)=>e.id!=id)});  
 
 
-    
-    
    
    
   }
@@ -183,6 +204,7 @@ export default class  HeaderConfig extends Component {
   componentDidMount(){
      
    this.getconfigList();
+   this.getDataTypes();
   }
 
   render() {
@@ -199,7 +221,8 @@ export default class  HeaderConfig extends Component {
                     <Fab size="small" aria-label="Edit" className={useStyles.fab} color="secondary"  onClick={this.handleClickOpen}>
                       <AddIcon />
                   </Fab>
-                  <FormDialog open={this.state.openDialog} handleClickOpen={this.handleClickOpen} currentItem={null} handleClose={this.handleClose} addFunction={this.addConfig} /> 
+                  <FormDialog open={this.state.openDialog} handleClickOpen={this.handleClickOpen} currentItem={null}
+                   handleClose={this.handleClose} addFunction={this.addConfig} dataTypeList={this.state.dataTypeList}/> 
                 </Toolbar> 
       
            
@@ -209,14 +232,11 @@ export default class  HeaderConfig extends Component {
                                                         <Box ><CustomProgress size={20} /></Box> <Box ><Typography  color="primary">Please wait...</Typography>
                                                         </Box></Box>
                                                       } 
-             <ConfigList title="Header Configuration" items={this.state.configList} onChange={this.onListChange} handleDelete={this.handleDelete}/>
+             <ConfigList title="Header Configuration" items={this.state.configList} onChange={this.onListChange}
+              handleDelete={this.handleDelete} updateFunction={this.updateConfig} dataTypeList={this.state.dataTypeList}/>
 
-             {/* <SortableList items={this.state.configList}/> */}
-             
-             {/* <SortableList/> */}
-
-             {/* <ConfigTestArea/>
-            <MatchInfo/> */}
+          <ConfigTestArea/>
+            {/* <MatchInfo/> */}
          
         </>
     )

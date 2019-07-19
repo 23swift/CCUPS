@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Form,Field,withFormik } from 'formik';
 import * as Yup from 'yup';
-import { MenuItem, Button, Dialog, FormControl, InputLabel, FormControlLabel, Checkbox, Grid, Box, Toolbar, Typography } from '@material-ui/core';
+import { MenuItem, Button, Dialog, FormControl, InputLabel, FormControlLabel, Checkbox, Grid, Box, Toolbar, Typography,TextField } from '@material-ui/core';
 
 import { DialogContent } from '@material-ui/core';
 import { DialogActions } from '@material-ui/core';
@@ -10,8 +10,10 @@ import useStyles from './useStyles';
 import { TextField as formikField,Select as formikSelect } from 'formik-material-ui';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { styled } from '@material-ui/styles';
-import { Send, Cancel } from '@material-ui/icons';
+import { Send, Cancel, Edit, Add, AddCircleOutline } from '@material-ui/icons';
 import { keys } from '@material-ui/core/styles/createBreakpoints';
+import { AddIcon } from '@material-ui/icons/Add';
+import { orange } from '@material-ui/core/colors';
 
 const CustomProgress=styled(CircularProgress)({
 
@@ -22,31 +24,8 @@ const CustomProgress=styled(CircularProgress)({
 
 
 });
-function getDataTypes(){
-  return([
-    {
-        "regexpattern": "[0-9]",
-        "id": 1,
-        "desc": "Numeric"
-    },
-    {
-        "regexpattern": "[0-9a-zA-Z]",
-        "id": 2,
-        "desc": "Alpha Numeric"
-    },
-    {
-        "regexpattern": "[0-9]",
-        "id": 3,
-        "desc": "Date"
-    },
-    {
-        "regexpattern": "[0-9]",
-        "id": 4,
-        "desc": "Amount"
-    }
-])
-}
-const typeList=getDataTypes();
+
+
 ////////////////Dialog
 const   FormDialog =(props)=> {
     
@@ -59,9 +38,10 @@ const   FormDialog =(props)=> {
           <DialogTitle id="form-dialog-title" color="primary">
             
           <Typography variant="inherit" color='primary' className={classes.title} >
-              File Layout Configuration
+                  {props.updateFunction && <><Edit style={{color:orange[500]}}/> Update Field</>} {props.addFunction && <><Add style={{color:orange[500]}}/> Add Field</>} Definition
             </Typography>
             
+          
             </DialogTitle>
             {/* <MySnackbarContentWrapper
               variant="info"
@@ -71,7 +51,8 @@ const   FormDialog =(props)=> {
           <DialogContent>
         
            
-            <InputForm addFunction={props.addFunction} cancelFunc={props.handleClose} values={props.currentItem}  updateFunction={props.updateFunction} />
+            <InputForm addFunction={props.addFunction} cancelFunc={props.handleClose} values={props.currentItem}
+              updateFunction={props.updateFunction}  dataTypeList={props.dataTypeList} />
           </DialogContent>
           {/* <DialogActions>
             <Button onClick={props.handleClose} color="primary" variant="contained">
@@ -88,9 +69,11 @@ const   FormDialog =(props)=> {
 
 
 
-
+  
   
 const InputFormTemplate =props =>{
+  
+
     const {
       values,
       touched,
@@ -100,9 +83,11 @@ const InputFormTemplate =props =>{
       cancelFunc,
       currentItem,
       updateFunction,
+      dataTypeList
       
     } = props;
-    //  console.log(props);
+    
+    
     
     
   const classes = useStyles();
@@ -113,8 +98,9 @@ const InputFormTemplate =props =>{
                         Add Post
                 </Typography> */}
               <Form >
-                         {/* <Field  component={formikField} label="Sequence Number"   fullWidth name="sequenceNum"   /> */}
-
+                         <Field component={formikField}  type="hidden"  name="id"   />
+                         <Field component={formikField}  type="hidden"  name="sequenceNum"   />
+                         
                         <FormControl className={classes.formControl}>
                         <Field  component={formikField} label="Field Name" value={values.fieldName}  fullWidth name="fieldName"   />
                         </FormControl>
@@ -126,8 +112,8 @@ const InputFormTemplate =props =>{
                            
                            
                             <Field component={formikField} select  label="Data Type"  name="dataType" id="type-simple">
-                            
-                              {typeList.map(item => (
+                            {dataTypeList &&
+                              dataTypeList.map(item => (
 
                                 <MenuItem value={item.id} key={item.id}>{item.desc}</MenuItem>
                               ))
@@ -149,20 +135,7 @@ const InputFormTemplate =props =>{
                             label="Mapp to System Field"
                         />
 
-                        {/* <FormControl className={classes.formControl}>
-                            { <InputLabel htmlFor="age-simple">System Field</InputLabel> }
-                            <Field component={formikSelect} name="systemField">
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            <MenuItem value={10}>Record Type</MenuItem>
-                            <MenuItem value={20}>Name</MenuItem>
-                            <MenuItem value={30}>Card Number</MenuItem>
-                            <MenuItem value={40}>Amount</MenuItem>
-                            <MenuItem value={50}>Card Number</MenuItem>
-                            <MenuItem value={60}>Transaction Date</MenuItem>
-                            </Field>
-                        </FormControl>       */}
+                      
 
 
                         <Toolbar>
@@ -226,7 +199,8 @@ export const InputForm = withFormik({
       
       return{fieldName:props.values?props.values.fieldName:'',
       dataType:props.values?props.values.dataType.id: 0,
-      size:props.values?props.values.size:''}
+      size:props.values?props.values.size:'',id:props.values?props.values.id:0
+      ,sequenceNum:props.values?props.values.sequenceNum:0}
       
     }
 
@@ -239,15 +213,18 @@ export const InputForm = withFormik({
     
     handleSubmit: (values,{props,resetForm,setSubmitting}) => {
       setSubmitting(true);
-     let selectedType = typeList.find((e)=> e.id==values.dataType);
+      
+      
+     let selectedType = props.dataTypeList.find((e)=> e.id==values.dataType);
      values.dataType=selectedType;
-      // console.log(props);
+    
      if(props.updateFunction){
       
+      
       setTimeout(() => {
-        props.updateFunction();
+        props.updateFunction(values);
         resetForm();
-       
+        props.cancelFunc();
         setSubmitting(false);
       }, 2000);
      }
