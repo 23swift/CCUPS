@@ -23,8 +23,8 @@ export default function ContentConfig() {
     return (
         <>
             <ConfigList title="Content Configuration" items={rows} addFn={addConfig}/>
-            <ConfigTestArea/>
-            <MatchInfo/>
+            {/* <ConfigTestArea/> */}
+            {/* <MatchInfo/> */}
         </>
     )
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import { Typography, makeStyles, Toolbar } from '@material-ui/core';
 import { AppBar, Tabs, Tab } from '@material-ui/core';
 import HeaderConfig from './HeaderConfig';
-import ContentConfig from './../content/ContentConfig';
+import ContentConfig from './ContentConfig';
 import FooterConfig from './../footer/FooterConfig';
 
 import { FeaturedPlayList, SaveAlt } from '@material-ui/icons';
