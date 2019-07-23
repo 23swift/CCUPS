@@ -32,7 +32,8 @@ export default class  HeaderConfig extends Component {
       configList:[],
       isLoading:false,
       openDialog:false,
-      dataTypeList:[]
+      dataTypeList:[],
+      matchingInfo:[]
       
     }
   }
@@ -44,7 +45,7 @@ export default class  HeaderConfig extends Component {
 
 
     config={...config,fileSection:1,fileType:1,sequenceNum:sqNum+1}
-      fetch('/api/addFileConfig',{
+      fetch('/api/addFileConfig?instId=1',{
         method:'POST',
         headers:{'content-type':'application/json'},
         body:JSON.stringify(config)
@@ -61,7 +62,7 @@ export default class  HeaderConfig extends Component {
   updateSequenceConfig=(config)=>{
     // config={...config,fileSection:1,fileType:1}
 
-     return fetch('api/UpdateConfigSequence',{
+     return fetch('api/UpdateConfigSequence?instId=1&fileType=1&fileSection=1',{
         method:'PUT',
         headers:{'content-type':'application/json'},
         body:JSON.stringify(config)
@@ -91,7 +92,7 @@ export default class  HeaderConfig extends Component {
   getconfigList=()=>{
     // console.log('code to get loist here');
     this.setState({...this.state,isLoading:true});
-    fetch("/api/GetAllInputFileConfig").
+    fetch("/api/GetAllInputFileConfig?instId=1&fileType=1&fileSection=1").
     then(response => response.json()).
     then((data)=>{
       setTimeout(()=>{
@@ -115,6 +116,21 @@ export default class  HeaderConfig extends Component {
      
     });
   
+  }
+  getMatchingInfo=(data)=>{
+    // console.log(data.testData);
+    
+  return  fetch("/api/GetMatchingInfo?instId=1&fileType=1&fileSection=1",{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:data.testData
+    }).
+    then(response => response.json()).then((data)=>{
+      
+      
+      this.setState({...this.state,matchingInfo:data});
+     
+    });
   }
   onListChange=(order,oldIndex,newIndex)=>{
     let configList=this.state.configList;
@@ -205,6 +221,9 @@ export default class  HeaderConfig extends Component {
      
    this.getconfigList();
    this.getDataTypes();
+  //  let test="1104183590135202100JHONATHAN CHUA PO             075022768600000000060484820150626BD000016680000000017\n"+
+  //  "1104183590135202100JHONATHAN CHUA PO             075022768600000000060484820150626BD000016680000000018"
+  //  this.getMatchingInfo(test);
   }
 
   render() {
@@ -232,11 +251,12 @@ export default class  HeaderConfig extends Component {
                                                         <Box ><CustomProgress size={20} /></Box> <Box ><Typography  color="primary">Please wait...</Typography>
                                                         </Box></Box>
                                                       } 
+             {   this.state.configList.length>0 &&                                      
              <ConfigList title="Header Configuration" items={this.state.configList} onChange={this.onListChange}
-              handleDelete={this.handleDelete} updateFunction={this.updateConfig} dataTypeList={this.state.dataTypeList}/>
+              handleDelete={this.handleDelete} updateFunction={this.updateConfig} dataTypeList={this.state.dataTypeList}/>}
 
-          <ConfigTestArea/>
-            {/* <MatchInfo/> */}
+          <ConfigTestArea getMatchingInfo={this.getMatchingInfo}/>
+            <MatchInfo matchingInfo={this.state.matchingInfo}/>
          
         </>
     )

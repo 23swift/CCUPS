@@ -43,8 +43,8 @@ export default class  HeaderConfig extends Component {
     let sqNum=this.state.configList.length;
 
 
-    config={...config,fileSection:1,fileType:1,sequenceNum:sqNum+1}
-      fetch('/api/addFileConfig',{
+    config={...config,fileSection:2,fileType:1,sequenceNum:sqNum+1}
+      fetch('/api/addFileConfig?instId=1',{
         method:'POST',
         headers:{'content-type':'application/json'},
         body:JSON.stringify(config)
@@ -59,9 +59,9 @@ export default class  HeaderConfig extends Component {
     
   }
   updateSequenceConfig=(config)=>{
-    // config={...config,fileSection:1,fileType:1}
+     config={...config,fileSection:2,fileType:1}
 
-     return fetch('api/UpdateConfigSequence',{
+     return fetch('api/UpdateConfigSequence?instId=1&fileType=1&fileSection=2',{
         method:'PUT',
         headers:{'content-type':'application/json'},
         body:JSON.stringify(config)
@@ -72,7 +72,7 @@ export default class  HeaderConfig extends Component {
     
   }
   updateConfig=(config)=>{
-    // config={...config,fileSection:1,fileType:1}
+     config={...config,fileSection:2,fileType:1}
 
      return fetch('api/UpdateConfig',{
         method:'PUT',
@@ -91,7 +91,7 @@ export default class  HeaderConfig extends Component {
   getconfigList=()=>{
     // console.log('code to get loist here');
     this.setState({...this.state,isLoading:true});
-    fetch("/api/GetAllInputFileConfig").
+    fetch("/api/GetAllInputFileConfig?instId=1&fileType=1&fileSection=2").
     then(response => response.json()).
     then((data)=>{
       setTimeout(()=>{

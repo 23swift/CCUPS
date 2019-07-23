@@ -22,7 +22,7 @@ export default function FooterConfig() {
                      
                     <ConfigList title="Footer Configuration" items={rows}/>
                     <ConfigTestArea/>
-                    <MatchInfo/>
+                    {/* <MatchInfo/> */}
         </>
     )
 }

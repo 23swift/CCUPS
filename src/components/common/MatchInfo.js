@@ -1,6 +1,9 @@
 import React from 'react'
 import useStyles from './useStyles';
-import { Typography, List, ListItem, Table, TableBody, TableRow, TableCell } from '@material-ui/core';
+import uniqueId from 'lodash/uniqueId';
+
+import { Typography, List, ListItem, Table, TableBody, TableRow, TableCell, TableHead } from '@material-ui/core';
+import { green, grey } from '@material-ui/core/colors';
 
     function creatematchData(pkid,fieldName, position, value, ) {
         return {pkid, fieldName, position, value, };
@@ -28,7 +31,7 @@ import { Typography, List, ListItem, Table, TableBody, TableRow, TableCell } fro
     }
     
     ]
-      const MatchInfo=()=>{
+      const MatchInfo=(props)=>{
         const classes = useStyles();
         return(
           <div style={{ marginLeft: 10}}>
@@ -37,21 +40,30 @@ import { Typography, List, ListItem, Table, TableBody, TableRow, TableCell } fro
             </Typography>
            
           <List >
-          {matchGroup.map(row => (
-                       <div key={row.groupName}>
-                               <Typography variant="subtitle1" color="primary" className={classes.subTitle}>
-                       {row.groupName}
+          {props.matchingInfo.map(info => (
+                       <div key={uniqueId()}>
+                               <Typography variant="subtitle1" style={{ backgroundColor:grey[100]}} color="primary">
+                      Full Match: {info.fullMatch}
                             </Typography>
-                                <ListItem  key={row.groupName} alignItems="flex-start">
+                                <ListItem key={uniqueId()}  alignItems="flex-start">
                                     
                                 <Table className={classes.table} size="small">
+                                <TableHead>
+           <TableRow>
+            
+            <TableCell align="left">Field</TableCell>
+            <TableCell align="left">Position</TableCell>
+            <TableCell align="left">Value</TableCell>
+            
+          </TableRow>
+        </TableHead>
                                   <TableBody>
-                                    {row.matchList.map(ml => (
-                                      <TableRow key={ml.pkid}>
+                                    {info.Details.map(ml => (
+                                      <TableRow key={uniqueId()}>
                                         <TableCell component="th" scope="row">
                                           {ml.fieldName}
                                         </TableCell>
-                                        <TableCell >{ml.position}</TableCell>
+                                        <TableCell >{ml.startIndex + " -> " +ml.endIndex}</TableCell>
                                         <TableCell   bgcolor="#f2f2f2" >
                                            <Typography color="primary" variant="subtitle2">
                                            {ml.value}  
