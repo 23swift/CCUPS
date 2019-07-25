@@ -100,6 +100,8 @@ const InputFormTemplate =props =>{
               <Form >
                          <Field component={formikField}  type="hidden"  name="id"   />
                          <Field component={formikField}  type="hidden"  name="sequenceNum"   />
+                         <Field component={formikField}  type="hidden"  name="fileType"   />
+                         <Field component={formikField}  type="hidden"  name="fileSection"   />
                          
                         <FormControl className={classes.formControl}>
                         <Field  component={formikField} label="Field Name" value={values.fieldName}  fullWidth name="fieldName"   />
@@ -200,7 +202,9 @@ export const InputForm = withFormik({
       return{fieldName:props.values?props.values.fieldName:'',
       dataType:props.values?props.values.dataType.id: 0,
       size:props.values?props.values.size:'',id:props.values?props.values.id:0
-      ,sequenceNum:props.values?props.values.sequenceNum:0}
+      ,sequenceNum:props.values?props.values.sequenceNum:0,
+      fileType:props.values?props.values.fileType:0,
+      fileSection: props.values?props.values.fileSection:0}
       
     }
 

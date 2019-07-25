@@ -14,6 +14,8 @@ import { CircularProgress } from '@material-ui/core';
 import FormDialog from '../common/FormDialog';
 import { blue, grey } from '@material-ui/core/colors';
 import SortableList from './../common/SortableList';
+
+import { FILE_SECTION } from './../common/AppConstants';
 const CustomProgress=styled(CircularProgress)({
 
  
@@ -62,7 +64,7 @@ export default class  HeaderConfig extends Component {
   updateSequenceConfig=(config)=>{
     // config={...config,fileSection:1,fileType:1}
 
-     return fetch('api/UpdateConfigSequence?instId=1&fileType=1&fileSection=1',{
+     return fetch('api/UpdateConfigSequence?instId=1&fileType=1&fileSection='+ FILE_SECTION.HEADER,{
         method:'PUT',
         headers:{'content-type':'application/json'},
         body:JSON.stringify(config)
@@ -91,8 +93,10 @@ export default class  HeaderConfig extends Component {
   
   getconfigList=()=>{
     // console.log('code to get loist here');
+    
+    
     this.setState({...this.state,isLoading:true});
-    fetch("/api/GetAllInputFileConfig?instId=1&fileType=1&fileSection=1").
+    fetch("/api/GetAllInputFileConfig?instId=1&fileType=1&fileSection="+ FILE_SECTION.HEADER).
     then(response => response.json()).
     then((data)=>{
       setTimeout(()=>{
@@ -120,7 +124,7 @@ export default class  HeaderConfig extends Component {
   getMatchingInfo=(data)=>{
     // console.log(data.testData);
     
-  return  fetch("/api/GetMatchingInfo?instId=1&fileType=1&fileSection=1",{
+  return  fetch("/api/GetMatchingInfo?instId=1&fileType=1&fileSection="+ FILE_SECTION.HEADER,{
       method:'POST',
       headers:{'Content-Type':'text/plain'},
       body:data.testData

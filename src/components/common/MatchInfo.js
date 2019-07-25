@@ -3,34 +3,9 @@ import useStyles from './useStyles';
 import uniqueId from 'lodash/uniqueId';
 
 import { Typography, List, ListItem, Table, TableBody, TableRow, TableCell, TableHead } from '@material-ui/core';
-import { green, grey } from '@material-ui/core/colors';
+import { green, grey, orange, blue } from '@material-ui/core/colors';
 
-    function creatematchData(pkid,fieldName, position, value, ) {
-        return {pkid, fieldName, position, value, };
-      }
-      const matchRows1 = [
-        creatematchData(1,'recordType', '0-3','110'),
-        creatematchData(2,'cardNumber', '3-19', '	4183590135202100'),
-        creatematchData(3,'name', '19-49', 'JHONATHAN CHUA PO     '),
-        creatematchData(4,'accountNumber', '49-59','0750227686'),
-        creatematchData(5,'amount', '59-72', '0000000006048'),
-      ];
-      const matchRows2 = [
-        creatematchData(6,'recordType', '0-3','110'),
-        creatematchData(7,'cardNumber', '3-19', '	4183590135202100'),
-        creatematchData(8,'name', '19-49', 'JHONATHAN CHUA PO     '),
-        creatematchData(9,'accountNumber', '49-59','0750227686'),
-        creatematchData(10,'amount', '59-72', '0000000006048'),
-      ];
-      const matchGroup=[{
-        groupName:'Line 1', matchList:matchRows1
-      },
-      {groupName:'Line 2', matchList:matchRows2
-    },
-    {groupName:'Line 3', matchList:matchRows2
-    }
     
-    ]
       const MatchInfo=(props)=>{
         const classes = useStyles();
         return(
@@ -42,7 +17,7 @@ import { green, grey } from '@material-ui/core/colors';
           <List >
           {props.matchingInfo.map(info => (
                        <div key={uniqueId()}>
-                               <Typography variant="subtitle1" style={{ backgroundColor:grey[100]}} color="primary">
+                               <Typography variant="subtitle1" style={{ backgroundColor:orange[400], color:grey[50]}} >
                       Full Match: {info.fullMatch}
                             </Typography>
                                 <ListItem key={uniqueId()}  alignItems="flex-start">
@@ -88,26 +63,7 @@ import { green, grey } from '@material-ui/core/colors';
            
           </List>
          
-          {/* <Typography variant="h6" className={classes.title}>
-              Match 2
-            </Typography>
-          <List >
-          {matchRows2.map(row => (
-            <div key={row.pkid}>
-                      <ListItem  key={row.pkid} alignItems="flex-start">
-                  <ListItemText
-                    primary={row.fieldName}
-                    secondary={'Position: '+row.position +' Value: '+row.value}
-                  />
-                </ListItem>
-                  <Divider variant="inset" component="li"  />
-  
-            </div>
-  
-                  
-                ))}
-          
-          </List>  */}
+       
         </div>
   
         );

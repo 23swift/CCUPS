@@ -14,6 +14,8 @@ import { CircularProgress } from '@material-ui/core';
 import FormDialog from '../common/FormDialog';
 import { blue, grey } from '@material-ui/core/colors';
 import SortableList from './../common/SortableList';
+
+import { FILE_SECTION } from './../common/AppConstants';
 const CustomProgress=styled(CircularProgress)({
 
  
@@ -32,7 +34,8 @@ export default class  HeaderConfig extends Component {
       configList:[],
       isLoading:false,
       openDialog:false,
-      dataTypeList:[]
+      dataTypeList:[],
+      matchingInfo:[]
       
     }
   }
@@ -43,7 +46,7 @@ export default class  HeaderConfig extends Component {
     let sqNum=this.state.configList.length;
 
 
-    config={...config,fileSection:2,fileType:1,sequenceNum:sqNum+1}
+    config={...config,fileSection: FILE_SECTION.CONTENT,fileType:1,sequenceNum:sqNum+1}
       fetch('/api/addFileConfig?instId=1',{
         method:'POST',
         headers:{'content-type':'application/json'},
@@ -59,9 +62,9 @@ export default class  HeaderConfig extends Component {
     
   }
   updateSequenceConfig=(config)=>{
-     config={...config,fileSection:2,fileType:1}
+    // config={...config,fileSection:1,fileType:1}
 
-     return fetch('api/UpdateConfigSequence?instId=1&fileType=1&fileSection=2',{
+     return fetch('api/UpdateConfigSequence?instId=1&fileType=1&fileSection='+ FILE_SECTION.CONTENT,{
         method:'PUT',
         headers:{'content-type':'application/json'},
         body:JSON.stringify(config)
@@ -72,7 +75,7 @@ export default class  HeaderConfig extends Component {
     
   }
   updateConfig=(config)=>{
-     config={...config,fileSection:2,fileType:1}
+    // config={...config,fileSection:1,fileType:1}
 
      return fetch('api/UpdateConfig',{
         method:'PUT',
@@ -90,8 +93,10 @@ export default class  HeaderConfig extends Component {
   
   getconfigList=()=>{
     // console.log('code to get loist here');
+    
+    
     this.setState({...this.state,isLoading:true});
-    fetch("/api/GetAllInputFileConfig?instId=1&fileType=1&fileSection=2").
+    fetch("/api/GetAllInputFileConfig?instId=1&fileType=1&fileSection="+ FILE_SECTION.CONTENT).
     then(response => response.json()).
     then((data)=>{
       setTimeout(()=>{
@@ -115,6 +120,21 @@ export default class  HeaderConfig extends Component {
      
     });
   
+  }
+  getMatchingInfo=(data)=>{
+    // console.log(data.testData);
+    
+  return  fetch("/api/GetMatchingInfo?instId=1&fileType=1&fileSection="+ FILE_SECTION.CONTENT,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:data.testData
+    }).
+    then(response => response.json()).then((data)=>{
+      
+      
+      this.setState({...this.state,matchingInfo:data});
+     
+    });
   }
   onListChange=(order,oldIndex,newIndex)=>{
     let configList=this.state.configList;
@@ -205,6 +225,7 @@ export default class  HeaderConfig extends Component {
      
    this.getconfigList();
    this.getDataTypes();
+  
   }
 
   render() {
@@ -232,11 +253,12 @@ export default class  HeaderConfig extends Component {
                                                         <Box ><CustomProgress size={20} /></Box> <Box ><Typography  color="primary">Please wait...</Typography>
                                                         </Box></Box>
                                                       } 
+             {   this.state.configList.length>0 &&                                      
              <ConfigList title="Header Configuration" items={this.state.configList} onChange={this.onListChange}
-              handleDelete={this.handleDelete} updateFunction={this.updateConfig} dataTypeList={this.state.dataTypeList}/>
+              handleDelete={this.handleDelete} updateFunction={this.updateConfig} dataTypeList={this.state.dataTypeList}/>}
 
-          <ConfigTestArea/>
-            {/* <MatchInfo/> */}
+          <ConfigTestArea getMatchingInfo={this.getMatchingInfo}/>
+           {this.state.matchingInfo.length>0 && <MatchInfo matchingInfo={this.state.matchingInfo}/>}
          
         </>
     )
